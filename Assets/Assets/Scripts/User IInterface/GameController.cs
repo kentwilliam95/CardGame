@@ -28,7 +28,7 @@ namespace Pusoy
         }
 
         public static State _state;
-
+        private int _restartCount;
         private Coroutine _spawnCardsCoroutine;
         private Dictionary<int, DatabaseSO.CardData> _cardDictionary;
         private List<DatabaseSO.CardData> _cardList;
@@ -39,14 +39,20 @@ namespace Pusoy
         private Agent _currentAgentTurn;
         private int _currentAgentTurnIndex;
         private int _currentTotalCard;
-        private int _winnerAgentIndexPerRound;
-        private List<CardView> _currentPlayCards = new List<CardView>();
+        private int _winnerAgentIndexPerRound;        
 
         [SerializeField] private Agent[] agents;
         [SerializeField] private PoolSpawnId _cardViewTemplateId;
         [SerializeField] private RectTransform _middleCardDisplay;
         [SerializeField] private MainMenuController _mainMenuController;
         [SerializeField] private ResultController _resultController;
+
+        [Header("AudioClip")]
+        [SerializeField] private AudioClip _cardShuffleAudioClip;
+        [SerializeField] private AudioClip _cardPlayAudioClip;
+        [SerializeField] private AudioClip _cardInCorrectAudioClip;
+        [SerializeField] private AudioClip _passAudioClip;
+        [SerializeField] private AudioClip _gameEndAudioClip;
 
         private void Start()
         {
@@ -69,6 +75,11 @@ namespace Pusoy
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                ShowResult("AA");
+            }
+
             if (_state == State.Play)
             {
                 if (!agents[_currentAgentTurnIndex].IsPass)
@@ -100,6 +111,7 @@ namespace Pusoy
 
         private void Agent_OnPass()
         {
+            AudioManager.Instance.PlaySfx(_passAudioClip);
             NextTurn();
         }
 
@@ -134,23 +146,17 @@ namespace Pusoy
 
         private void NextRound()
         {
-            for (int i = 0; i < _currentPlayCards.Count; i++)
-                _currentPlayCards[i].gameObject.SetActive(false);
+            ClearMiddleCards();
 
             for (int i = 0; i < agents.Length; i++)
             {
-                agents[i].ResetState();
+                agents[i].SetPass(false);
                 agents[i].SetTurn(false);
             }
-
 
             _currentAgentTurnIndex = _winnerAgentIndexPerRound;
             agents[_currentAgentTurnIndex].SetTurn(true);
 
-            for (int i = 0; i < _middleCardDisplay.childCount; i++)
-                _middleCardDisplay.GetChild(i).gameObject.SetActive(false);
-
-            _currentPlayCards.Clear();
             _currentCardPlayed = CardPlayed.None;
             _currentPlayPoint = 0;
         }
@@ -158,7 +164,8 @@ namespace Pusoy
         private void Agent_OnCardEmpty(int agentIndex)
         {
             _state = State.End;
-            _winnerAgentIndexPerRound = agentIndex;
+            AudioManager.Instance.PlaySfx(_gameEndAudioClip);
+            ShowResult(agents[agentIndex].name);
         }
 
         private bool Agent_OnPlayCards(Agent agent, List<CardView> playCards)
@@ -213,7 +220,7 @@ namespace Pusoy
                     _winnerAgentIndexPerRound = agent.Index;
 
                     NextTurn();
-
+                    AudioManager.Instance.PlaySfx(_cardPlayAudioClip);
                     // Debug.Log($"Point: {_currentPlayPoint}");
 
                     for (int i = 0; i < playCards.Count; i++)
@@ -259,10 +266,13 @@ namespace Pusoy
 
                     for (int i = 0; i < playCards.Count; i++)
                         playCards[i].gameObject.transform.SetParent(_middleCardDisplay);
-
+                    
+                    AudioManager.Instance.PlaySfx(_cardPlayAudioClip);
                     _currentTotalCard = playCards.Count;
                     NextTurn();
                 }
+                else
+                    AudioManager.Instance.PlaySfx(_cardInCorrectAudioClip);
 
                 isReplaceCard = checkifReplaceCard;
                 for (int i = 0; i < playCards.Count; i++)
@@ -272,8 +282,8 @@ namespace Pusoy
             {
                 for (int i = 0; i < playCards.Count; i++)
                     playCards[i].UnClick();
-
             }
+
             playCards.Clear();
             return isReplaceCard;
         }
@@ -491,6 +501,9 @@ namespace Pusoy
 
         private void GenerateCardDictionary()
         {
+            if(_cardDictionary != null && _cardList != null)
+                return;
+
             _cardDictionary = new Dictionary<int, DatabaseSO.CardData>();
             _cardList = new List<DatabaseSO.CardData>();
             int multiplier = 0;
@@ -555,6 +568,8 @@ namespace Pusoy
         private IEnumerator SpawnCardCoroutine(System.Action OnComplete = null)
         {
             List<CardView> listCardViews = new List<CardView>();
+            AudioManager.Instance.PlaySfx(_cardShuffleAudioClip);
+            yield return new WaitForSeconds(0.25f);
             for (int i = 0; i < _cardList.Count; i++)
             {
                 var cardView = ObjectPool.Instance.Spawn(_cardViewTemplateId.id).GetComponent<CardView>();
@@ -588,9 +603,32 @@ namespace Pusoy
             onComplete?.Invoke();
         }
 
+        private void ShowResult(string agentName)
+        {
+             _state = GameController.State.End;
+             _resultController.Show(agentName);
+        }
+
         public void Restart()
         {
+            _currentPlayPoint = 0;
+            _currentCardPlayed = CardPlayed.None;
+            _restartCount += 1;
+            ClearMiddleCards();
+            _resultController.Hide();
+            for (int i = 0; i < agents.Length; i++)
+            {
+                agents[i].ResetState();
+            }
+            StartGame();
+        }
 
+        private void ClearMiddleCards()
+        {
+            for (int i = _middleCardDisplay.childCount - 1; i >=0 ; i--)
+            {
+                ObjectPool.Instance.UnSpawn(_middleCardDisplay.GetChild(i).gameObject);
+            }
         }
     }
 }

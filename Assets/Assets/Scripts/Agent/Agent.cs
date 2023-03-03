@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using Core;
 
 namespace Pusoy
 {
@@ -10,8 +11,8 @@ namespace Pusoy
         protected List<CardView> _listCards;
         protected List<CardView> _ChoosenCards;
         protected bool isPass;
-        protected int _index;        
-        
+        protected int _index;
+
         [SerializeField] private RectTransform _cardContainer;
         [SerializeField] private Image _imageBorder;
 
@@ -33,7 +34,7 @@ namespace Pusoy
 
             _listCards.Add(card);
             card.transform.SetParent(_cardContainer);
-            card.transform.localScale = Vector3.one; 
+            card.transform.localScale = Vector3.one;
         }
 
         public virtual void SetTurn(bool isActive)
@@ -74,12 +75,23 @@ namespace Pusoy
 
         public void ResetState()
         {
-            isPass = false;
+            SetPass(false);
+            for (int i = _listCards.Count - 1; i >= 0; i--)
+            {
+                ObjectPool.Instance.UnSpawn(_listCards[i].gameObject);
+            }
+            _listCards.Clear();
+            _ChoosenCards.Clear();
+        }
+
+        public void SetPass(bool isPass)
+        {
+            this.isPass = isPass;
         }
 
         public virtual void OnUpdate(GameController.CardPlayed cardPlayed, int totalCard, int tablePoint)
         {
-            
+
         }
 
         public bool HaveThreeOfDiamond()
@@ -100,6 +112,11 @@ namespace Pusoy
                 }
             }
             return result;
+        }
+
+        public void RestartState()
+        {
+            
         }
     }
 }

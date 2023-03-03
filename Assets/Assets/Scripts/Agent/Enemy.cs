@@ -89,13 +89,13 @@ namespace Pusoy
             if (PlayTripleCard(tablePoint))
             {
                 canPlayTripleCard = true;
-                Debug.Log("Play Triple");
+                // Debug.Log("Play Triple");
             }
 
             if (!canPlayTripleCard && PlayPairCard(tablePoint))
             {
                 canPlayPair = true;
-                Debug.Log("Play Pair");
+                // Debug.Log("Play Pair");
             }
 
             if (!canPlayPair && !canPlayTripleCard)
@@ -306,7 +306,7 @@ namespace Pusoy
                                 item1 = kvp.Value[breakIndex];
                                 item2 = kvp.Value[breakIndex + 1];
                             }
-                            else if (breakIndex + 1 > 2)
+                            else if (breakIndex + 1 >= 2)
                             {
                                 item1 = kvp.Value[breakIndex];
                                 item2 = kvp.Value[breakIndex - 1];
