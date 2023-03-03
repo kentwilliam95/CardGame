@@ -38,6 +38,8 @@ namespace Pusoy
                     var value = CheckCanPlayCard(tablePoint);
                     if (value)
                         PlayCard();
+                    else
+                        Pass();
                     break;
 
                 case GameController.CardPlayed.Single:
@@ -53,6 +55,14 @@ namespace Pusoy
                         PlayCard();
                     else
                         Pass();
+                    break;
+
+                case GameController.CardPlayed.Triple:
+                    if (PlayTripleCard(tablePoint))
+                        Pass();
+                    else
+                        Pass();
+
                     break;
             }
         }
@@ -105,7 +115,7 @@ namespace Pusoy
 
             int otherNumber = tablePoint % 1000;
             int otherSuit = tablePoint / 1000;
-            
+
             if (firstTurn)
             {
                 var list = tableComboFullHouseAndForOfKinds[3];
@@ -200,10 +210,12 @@ namespace Pusoy
             }
             else
             {
+                int otherNumber = tablePoint / 1000;
+                int otherSuit = tablePoint % 1000;
                 foreach (var kvp in tableComboFullHouseAndForOfKinds)
                 {
                     var list = kvp.Value;
-                    if (list.Count >= 3)
+                    if (list.Count >= 3 && kvp.Key > otherNumber)
                         dictIndex.Add(kvp.Key);
                 }
             }
