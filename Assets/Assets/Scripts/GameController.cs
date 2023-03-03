@@ -75,11 +75,6 @@ namespace Pusoy
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                ShowResult("AA");
-            }
-
             if (_state == State.Play)
             {
                 if (!agents[_currentAgentTurnIndex].IsPass)
