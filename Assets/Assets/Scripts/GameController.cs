@@ -552,7 +552,7 @@ namespace Pusoy
 
 
                     cardData.cardName = cardName;
-                    // Debug.Log($"card value:{cardData.value}, j:{j}, total value: {cardData.totalValue}");
+                    
                     _cardList.Add(cardData);
                     _cardDictionary.Add(cardData.totalValue, cardData);
                 }

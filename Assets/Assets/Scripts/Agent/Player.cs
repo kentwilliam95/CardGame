@@ -35,7 +35,6 @@ namespace Pusoy
         public override void PlayCard()
         {
             base.PlayCard();
-            Debug.Log(_listCards.Count);
         }
         
         private void Card_OnClick(CardView cardView)
