@@ -1911,6 +1911,7 @@ MonoBehaviour:
   _cardViewTemplateId: {fileID: -2315736598829707067, guid: c69910d9e1223447db67af12b12c94e9, type: 3}
   _middleCardDisplay: {fileID: 641083954}
   _mainMenuController: {fileID: 1832735923}
+  _resultController: {fileID: 1588331620}
 --- !u!1 &1367393945
 GameObject:
   m_ObjectHideFlags: 0
@@ -2438,6 +2439,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9a6061b698ca4a73ab2339d3fc6a452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _winnerText: {fileID: 104049322}
+  _canvasGroup: {fileID: 1588331614}
 --- !u!1 &1595379254
 GameObject:
   m_ObjectHideFlags: 0
