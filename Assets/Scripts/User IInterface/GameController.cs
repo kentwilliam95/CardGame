@@ -46,11 +46,13 @@ namespace Pusoy
         [SerializeField] private PoolSpawnId _cardViewTemplateId;
         [SerializeField] private RectTransform _middleCardDisplay;
         [SerializeField] private MainMenuController _mainMenuController;
+        [SerializeField] private ResultController _resultController;
 
         private void Start()
         {
             _state = State.MainMenu;
             _mainMenuController.Show();
+            _resultController.Hide();
         }
 
         public void StartGame()
