@@ -108,6 +108,9 @@ namespace Pusoy
 
         private void Agent_OnPass()
         {
+            if(_currentCardPlayed == CardPlayed.None)
+                return;
+
             AudioManager.Instance.PlaySfx(_passAudioClip);
             NextTurn();
         }
@@ -119,6 +122,7 @@ namespace Pusoy
             for (int i = 0; i < agents.Length; i++)
                 agents[i].SetTurn(false);
 
+            int selectedIndex = -1;
             for (int i = 0; i < 4; i++)
             {
                 _currentAgentTurnIndex += 1;
@@ -129,8 +133,8 @@ namespace Pusoy
                     passCount += 1;
                 else
                 {
-                    agents[_currentAgentTurnIndex].SetTurn(true);
-                    break;
+                    if(selectedIndex <= -1)
+                        selectedIndex = _currentAgentTurnIndex;
                 }
             }
 
@@ -138,6 +142,11 @@ namespace Pusoy
             {
                 Debug.Log("NextRound");
                 NextRound();
+            }
+            else
+            {
+                _currentAgentTurnIndex = selectedIndex;
+                agents[_currentAgentTurnIndex].SetTurn(true);
             }
         }
 
