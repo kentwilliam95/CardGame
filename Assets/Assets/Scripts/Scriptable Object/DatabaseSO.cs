@@ -21,7 +21,7 @@ namespace Pusoy
             public Sprite sprite;
             public CardType cardType;
             public int value;
-            public int fiveCardValue;
+            public int cardDatabseIndex;
             public int totalValue;
             public string cardName;
         }
@@ -33,22 +33,28 @@ namespace Pusoy
             public Sprite[] sprites;
         }
 
-        private Dictionary<int, CardData> _cardDictionary;
+        private Dictionary<int, Sprite> _cardDictionary;
 
         public CardDataHeader[] data;
 
         public void Initialize()
         {
-            _cardDictionary = new Dictionary<int, CardData>();
+            _cardDictionary = new Dictionary<int, Sprite>();
             for (int i = 0; i < data.Length; i++)
             {
-                int number = 3;
+                int number = 2;
                 var sprites = data[i].sprites;
                 for (int j = 0; j < sprites.Length; j++)
                 {
-                    
+                    _cardDictionary.Add((int)data[i].cardType * 1000 + number, sprites[j]);
+                    number += 1;
                 }
             }
+        }
+
+        public Sprite GetSprite(int id)
+        {
+            return _cardDictionary[id];
         }
     }
 }

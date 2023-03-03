@@ -12,13 +12,13 @@ namespace Pusoy
         private DatabaseSO.CardData _card;
         [SerializeField] private Image _image;
         [SerializeField] private TextMeshProUGUI _text;
+        
         public DatabaseSO.CardData Card => _card;
         public System.Action<CardView> OnClick;
-        public void Initialize(DatabaseSO.CardData card)
+        public void Initialize(DatabaseSO.CardData card, DatabaseSO database)
         {            
             _card = card;
-            _image.sprite = card.sprite;
-
+            _image.sprite = database.GetSprite(_card.cardDatabseIndex);
             _text.text = card.cardName;
         }
 

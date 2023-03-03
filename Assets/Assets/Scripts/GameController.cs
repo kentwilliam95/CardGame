@@ -43,6 +43,7 @@ namespace Pusoy
 
         [SerializeField] private Agent[] agents;
         [SerializeField] private PoolSpawnId _cardViewTemplateId;
+        [SerializeField] private DatabaseSO _database;
         [SerializeField] private RectTransform _middleCardDisplay;
         [SerializeField] private MainMenuController _mainMenuController;
         [SerializeField] private ResultController _resultController;
@@ -56,6 +57,7 @@ namespace Pusoy
 
         private void Start()
         {
+            _database.Initialize();
             _state = State.MainMenu;
             _mainMenuController.Show();
             _resultController.Hide();
@@ -510,7 +512,7 @@ namespace Pusoy
                     cardData.value = j == 15 ? 2 : j;
                     cardData.totalValue = j + (multiplier * 10);
                     cardData.cardType = (DatabaseSO.CardType)multiplier;
-
+                    cardData.cardDatabseIndex = multiplier * 1000 + cardData.value;
                     string cardName = string.Empty;
                     switch (j)
                     {
@@ -570,7 +572,7 @@ namespace Pusoy
                 var cardView = ObjectPool.Instance.Spawn(_cardViewTemplateId.id).GetComponent<CardView>();
                 cardView.transform.localPosition = Vector3.zero;
                 cardView.transform.localScale = Vector3.one;
-                cardView.Initialize(_cardList[i]);
+                cardView.Initialize(_cardList[i], _database);
                 cardView.gameObject.SetActive(true);
                 listCardViews.Add(cardView);
                 yield return null;
