@@ -62,7 +62,13 @@ namespace Pusoy
                         Pass();
                     else
                         Pass();
-
+                    break;
+                
+                case GameController.CardPlayed.Straight:
+                case GameController.CardPlayed.Flush:
+                case GameController.CardPlayed.FullHouse:
+                case GameController.CardPlayed.FourOfKind:
+                    Pass();
                     break;
             }
         }
@@ -121,7 +127,7 @@ namespace Pusoy
                 var list = tableComboFullHouseAndForOfKinds[3];
                 if (list.Count >= 4)
                 {
-
+                    
                 }
                 else
                 {
@@ -180,6 +186,7 @@ namespace Pusoy
 
             return canPlayCards;
         }
+
         private bool PlayFullHouse(GameController.CardPlayed cardPlayed, int tablePoint)
         {
             if (GameController.CardPlayed.FullHouse < cardPlayed)
